@@ -15,7 +15,7 @@ def index(request):
         return HttpResponse(serializers.serialize("json", results))
     
 def create_results(page):
-    start = (page * 100)
-    end = (page + 1) * 100
+    start = (page * 250)
+    end = (page + 1) * 250
     
     return Location.objects.all()[start:end]
