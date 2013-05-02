@@ -1,18 +1,38 @@
-var markerCluster, totalCount, currentCount;
+var currentCount = 0,
+	currentPage = 0,
+	markerCluster, 
+	totalCount = 0;
 
-function getLocations(pageCounter) {
-	$.getJSON('http://127.0.0.1:8000/locations/', 
-		{ page : pageCounter }, 
-		function(data) {
-			createMarkers(data);
-		}
+function getLocations() {
+	$.when(createLocationRequest())
+		.done(function() {
+			updateLoadingMessages(currentCount / totalCount);
+			
+			if(currentCount < totalCount){
+				getLocations();
+			}
+		})
+		.fail(function() {
+			alert("Something bad happened...");
+		});
+}
+
+
+function createLocationRequest() {
+	return $.getJSON('http://127.0.0.1:8000/locations/', 
+			{ page : currentPage++ }, 
+			function(data) {
+				if(totalCount == 0){
+					totalCount = data.meta.total;
+				}
+					
+				createMarkers(data.results);
+			}
 	);
 }
 
-function updateLoadingMessages(){
+function updateLoadingMessages(pctLoaded){
 	$("#total-loaded").html(currentCount);
-	
-	var pctLoaded = (currentCount / totalCount) * 100
 	
 	if(pctLoaded == 100){
 		$("#loading-message").html("Done!");
@@ -23,7 +43,7 @@ function updateLoadingMessages(){
 
 function createMarkers(locations) {
 	for(var i = 0; i < locations.length; i++){
-		var locData = locations[i].fields;
+		var locData = locations[i];
 		
 		var marker = L.marker([locData.latitude, locData.longitude]);
 		
@@ -33,7 +53,6 @@ function createMarkers(locations) {
 	}
 	
 	currentCount += locations.length;
-	updateLoadingMessages();	
 }
 
 function createPopupContent(locData) {
@@ -42,14 +61,8 @@ function createPopupContent(locData) {
 
 $(document).ready(function() {
 	markerCluster = new L.MarkerClusterGroup();
-	currentCount = 0;
-	totalCount = 20000; //Hardcoded for now, should be set dynamically based on COUNT(*) of lat/long points
-	
-	//TO-DO: How does IE8 get 'out of order' on this loop? In general it really seems to 
-	//choke on this operation
-	for(var i = 0; i < 80; i++){
-		getLocations(i);
-	}
+
+	getLocations();	
 
 	map.addLayer(markerCluster);
 });
