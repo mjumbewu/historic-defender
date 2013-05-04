@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'historic_defender.views.index'),
     url(r'^locations', 'locations.views.index'),
+    url(r'^parcels', 'locations.views.parcels'),    
     url(r'^admin/', include(admin.site.urls)),        
     # url(r'^historic_defender/', include('historic_defender.foo.urls')),
 

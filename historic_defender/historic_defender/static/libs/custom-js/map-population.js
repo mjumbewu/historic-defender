@@ -13,10 +13,43 @@ function getLocations() {
 			}
 		})
 		.fail(function() {
-			alert("Something bad happened...");
+			alert("Something bad happened while loading locations...");
 		});
 }
 
+function getParcel(locid){
+	$.when(createParcelRequest(locid))
+		.done(function() {
+			$("#parcelModal").modal('show');
+		})
+		.fail(function() {
+			alert("Something bad happened while loading parcel...");
+		});		
+}
+
+function createParcelRequest(locid) {
+	return $.getJSON('http://127.0.0.1:8000/parcels/', 
+			{ locid : locid }, 
+			function(data) {
+				var modalHtml = createModalHtml(data);
+				$("#parcelModalBody").html(modalHtml);
+			}
+	);
+}
+
+function createModalHtml(data){
+	var modalHtml = '<p><ul>';
+	
+	for(var i = 0; i < data.length; i++){
+		var parcelData = data[i];
+		
+		modalHtml += '<li>' + parcelData.number + '</li>';
+	}
+	
+	modalHtml += '</ul></p>';
+	
+	return modalHtml;
+}
 
 function createLocationRequest() {
 	return $.getJSON('http://127.0.0.1:8000/locations/', 
@@ -34,9 +67,9 @@ function createLocationRequest() {
 function updateLoadingMessages(pctLoaded){
 	$("#total-loaded").html(currentCount);
 	
-	if(pctLoaded == 100){
+	if(pctLoaded == 1){
 		$("#loading-message").html("Done!");
-		$("#loading-message").addClass("alert-success").removeClass("alert-warning");
+		$("#loading-message").addClass("alert-success").removeClass("alert-info");
 	}
 
 }
@@ -56,7 +89,7 @@ function createMarkers(locations) {
 }
 
 function createPopupContent(locData) {
-	return '<p> Address: ' + locData.address + ' <br/> Parcel: ' + locData.parcel + '</p>';
+	return '<p> Address: ' + locData.address + ' <br/><br/> <button class="btn btn-small btn-info" onclick="getParcel(' + locData.id + ');">View Parcels</button></p>';
 }
 
 $(document).ready(function() {
