@@ -1,5 +1,6 @@
 from django.core            import serializers
 from django.db              import connection
+from django.db              import models
 from django.http            import HttpResponse
 from locations.models       import Location
 from locations.models       import Parcel
@@ -17,6 +18,9 @@ def index(request):
         return HttpResponse( json.dumps( results))
 
 def parcels(request):
+#    results = Parcel.objects.all().values("location_id").annotate(n=models.Count("pk")).order_by('-n')
+#    return HttpResponse( json.dumps( list( results)))
+    
     locid = request.GET.get('locid')
 
     if locid:
@@ -27,8 +31,8 @@ def parcels(request):
         return HttpResponse( json.dumps( list( results)))
     
 def create_results(page):
-    start = (page * 250)
-    end = (page + 1) * 250
+    start = (page * 500)
+    end = (page + 1) * 500
        
     return dict(meta    = dict( total = Location.objects.count() ) ,
                 results = list( Location.objects.all().values()[start:end] ) )  

@@ -1,15 +1,19 @@
-var currentCount = 0,
-	currentPage = 0,
-	markerCluster, 
-	totalCount = 0;
+var iCurrentCount = 0,
+	iCurrentPage = 0,
+	iTotalCount = 0;
 
 function getLocations() {
 	$.when(createLocationRequest())
 		.done(function() {
-			updateLoadingMessages(currentCount / totalCount);
-			
-			if(currentCount < totalCount){
+			if(iCurrentCount < iTotalCount){
 				getLocations();
+			}
+			
+			updateLoadingMessages(iCurrentCount / iTotalCount);
+
+			if(iCurrentCount == iTotalCount){
+				bMapLoading = false;
+				$('#button-show-table').removeClass("disabled");				
 			}
 		})
 		.fail(function() {
@@ -53,19 +57,21 @@ function createModalHtml(data){
 
 function createLocationRequest() {
 	return $.getJSON('http://127.0.0.1:8000/locations/', 
-			{ page : currentPage++ }, 
+			{ page : iCurrentPage++ }, 
 			function(data) {
-				if(totalCount == 0){
-					totalCount = data.meta.total;
+				if(iTotalCount == 0){
+					iTotalCount = data.meta.total;
 				}
 					
+				//Weirdness, located in table-population.js
+				createTableRows(data.results);
 				createMarkers(data.results);
 			}
 	);
 }
 
 function updateLoadingMessages(pctLoaded){
-	$("#total-loaded").html(currentCount);
+	$("#total-loaded").html(iCurrentCount);
 	
 	if(pctLoaded == 1){
 		$("#loading-message").html("Done!");
@@ -82,20 +88,12 @@ function createMarkers(locations) {
 		
 		marker.bindPopup(createPopupContent(locData)).openPopup();
 
-		markerCluster.addLayer(marker);
+		oMarkerCluster.addLayer(marker);
 	}
 	
-	currentCount += locations.length;
+	iCurrentCount += locations.length;
 }
 
 function createPopupContent(locData) {
 	return '<p> Address: ' + locData.address + ' <br/><br/> <button class="btn btn-small btn-info" onclick="getParcel(' + locData.id + ');">View Parcels</button></p>';
 }
-
-$(document).ready(function() {
-	markerCluster = new L.MarkerClusterGroup();
-
-	getLocations();	
-
-	map.addLayer(markerCluster);
-});

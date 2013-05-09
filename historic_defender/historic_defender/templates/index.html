@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Bootstrap, from Twitter</title>
+		<title>Historic Defender</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="">
 		<meta name="author" content="">
@@ -11,7 +11,9 @@
 		<link href="{{ STATIC_URL }}libs/bootstrap-2.1.1/css/bootstrap.min.css" rel="stylesheet">
 		<link href="{{ STATIC_URL }}libs/leaflet-0.4.4/leaflet.css" rel="stylesheet" />
 		<link href="{{ STATIC_URL }}libs/leaflet-markercluster/MarkerCluster.css" rel="stylesheet" />		
-		<link href="{{ STATIC_URL }}libs/leaflet-markercluster/MarkerCluster.Default.css" rel="stylesheet" />		
+		<link href="{{ STATIC_URL }}libs/leaflet-markercluster/MarkerCluster.Default.css" rel="stylesheet" />
+		<!-- <link href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css" rel="stylesheet" /> -->
+		<link href="{{ STATIC_URL }}libs/datatables-1.94/bootstrap-datatables.css" rel="stylesheet" />		 		
 		<!--[if lte IE 8]>
 		<link rel="stylesheet" href="{{ STATIC_URL }}libs/leaflet-markercluster/MarkerCluster.Default.ie.css" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}libs/leaflet-0.4.4/leaflet.ie.css" />		
@@ -29,7 +31,7 @@
 		<link rel="apple-touch-icon-precomposed" href="bootstrap-2.1.1/ico/apple-touch-icon-57-precomposed.png">
 	</head>
 
-	<body class="map">
+	<body >
 		<div class="navbar">
 			<div class="navbar-inner">
 				<div class="container">
@@ -52,13 +54,38 @@
 		<div class="fullscreen">
 			<div class="container-fluid">
 				<div class="row-fluid">
-					<div class="span9">
+					<div id="content-span" class="span9">
 						<div id="map"></div>
+						<table id="address-list" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th>Address</th>
+									<th>Parcel(s)</th>
+									<th>Latitude</th>
+									<th>Longitude</th>
+								</tr>
+							</thead>
+							<tbody id="address-list-body">
+							</tbody>
+						</table>	
 					</div>
-					<div class="span3 hidden-phone">
-						<h3 id="loading-message" class="alert-info">Loading...</h3>
+					<div id="gui-span" class="span3 hidden-phone">
+						<h3 id="loading-message" class="alert-info">Loading Map...</h3>
 						
 						<h6><span id="total-loaded">0</span> historic points</h6>
+						
+						<hr/>
+						<div class="row-fluid">
+							<div class="span8 offset2">
+								<a id="button-show-map" class="btn btn-block btn-success">Show Map</a>
+								<a id="button-show-table" class="btn btn-block btn-danger disabled">Show Table</a>								
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span8 offset2">
+								
+							</div>							
+						</div>						
 					</div>
 				</div>
 			</div>
@@ -66,12 +93,11 @@
 
 		<div id="parcelModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		  	<div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
 		    	<h3 id="parcelModal">Associated parcels</h3>
 		  	</div>
 		  	<div class="modal-body">
 		  		<div id="parcelModalBody">
-		  			
 		  		</div>
 		  	</div>
 		  	<div class="modal-footer">
@@ -82,10 +108,12 @@
 		<!-- Le javascript
 		================================================== -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 		<script src="{{ STATIC_URL }}libs/bootstrap-2.1.1/js/bootstrap.js"></script>
 		<script src="{{ STATIC_URL }}libs/leaflet-0.4.4/leaflet.js"></script>
 		<script src="{{ STATIC_URL }}libs/leaflet-markercluster/leaflet.markercluster.js"></script>		
-		<script src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>		
+		<script src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>
+				
 		<script>
 			var layer = new L.StamenTileLayer("toner")
 		
@@ -98,5 +126,7 @@
 		</script>
 		
 		<script src="{{ STATIC_URL }}libs/custom-js/map-population.js"></script>
+		<script src="{{ STATIC_URL }}libs/custom-js/table-population.js"></script>
+		<script src="{{ STATIC_URL }}libs/custom-js/document-ready.js"></script>
 	</body>
 </html>
