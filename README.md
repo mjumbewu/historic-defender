@@ -1,7 +1,9 @@
 historic-defender
 =================
 
-Goal: To take a list of historically relevant Philadelphia-area addresses and present them in a highly accessible and interactive form.
+Goal: 
+
+To take a list of historically relevant Philadelphia-area addresses and present them in a highly accessible and interactive form.
 
 Data Sources:
 
